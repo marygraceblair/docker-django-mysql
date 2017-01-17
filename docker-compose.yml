@@ -1,0 +1,32 @@
+version: '2'
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: databasename
+      MYSQL_USER: databaseuser
+      MYSQL_PASSWORD: databasepassword
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DJ_DEBUG: "True"
+    volumes:
+      - ./pythonproject:/code       # change python to your project name
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: databaseuser
+      PMA_PASSWORD: databasepassword
+    restart: always
+    ports:
+      - 8080:80
+    depends_on:
+      - db
